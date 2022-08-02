@@ -1,7 +1,8 @@
 function [alpha_mu, beta_mu] = calculatePower(sig_, dc_)
     close all
     
-
+    dc_ = dc_^2;
+    
     Fsig_ = fft(sig_) / length(sig_);
     aFsig_ = abs(Fsig_); 
    

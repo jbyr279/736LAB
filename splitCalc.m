@@ -47,8 +47,8 @@ title("Alpha Band VS Beta Band Power")
 xlabel("Alpha Band Power (dB)")
 ylabel("Beta Band Power (dB)")
 
-xlim([-18 0]);
-ylim([-30 0]);
+xlim([40 60]);
+ylim([30 50]);
 
 labels = ["Eyes Closed" , "Eyes Open"];
 
@@ -91,8 +91,8 @@ h3.LineWidth = 2;
 plot(sample_data(:, 1), sample_data(:,2), "o", "Color", [1 0 0]);
 plot(train_data(:, 1), train_data(:,2), "o", "Color", [0 0 1]);
 
-xlim([-18 0]);
-ylim([-30 0]);
+xlim([40 60]);
+ylim([30 50]);
 
 title("Alpha Band VS Beta Band Power (Decision Boundary After Classification)")
 xlabel("Alpha Band Power (dB)")
@@ -117,19 +117,5 @@ end
 
 % Calc success rate
 pct_succ = (1-length(find(res(:,3) == "0"))/trials) * 100;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 clearvars -except res pct_succ
