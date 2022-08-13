@@ -164,5 +164,5 @@ power_band = [power_band, yn'];
 FLD = cellfun(@str2num, res_fld(:,3));
 SVM = cellfun(@str2num, res_svm(:,3));
 
-[H,p,CI] = ttest2(FLD,SVM);
+p = ranksum(FLD,SVM);
 

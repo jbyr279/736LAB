@@ -161,6 +161,8 @@ power_band = [power_band, yn'];
 
 %% T-test 
 
- = cellfun(@str2num, ans);
-B = cellfun(@str2num, ans)
+% FLD = cellfun(@str2num, res_fld(:,3));
+% SVM = cellfun(@str2num, res_svm(:,3));
+
+p = ranksum(FLD,SVM);
 
