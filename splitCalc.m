@@ -59,6 +59,7 @@ power_band = [alpha', beta'];
 
 % Result array
 res = [];
+pred_svm = [];
 
 % Classify data and test algo
 for i = -1:2:trials-3 
@@ -80,6 +81,12 @@ for i = -1:2:trials-3
     
     % Set up function
     f = @(alpha, beta) K + L(1)*alpha + L(2)*beta;
+    
+
+    svm = fitcsvm(train_data, trial_status);
+    label = predict(svm, sample_data);
+
+    pred_svm = [pred_svm; label];
 
 end
 
@@ -106,6 +113,7 @@ legend(labels, "Location","best");
 
 hold off
 
+pred_svm = [pred_svm, status'];
 res = [res, status'];
 
 % Set up success rate
@@ -114,6 +122,12 @@ for i = 1:trials
         res(i,3) = 1;
     else
         res(i,3) = 0;
+    end
+
+    if (pred_svm(i,1) == pred_svm(i,2)) 
+        pred_svm(i,3) = 1;
+    else
+        pred_svm(i,3) = 0;
     end
 end
 
@@ -144,3 +158,11 @@ ylim([-0.04, 0.04])
 pct_succ = (1-length(find(res(:,3) == "0"))/trials) * 100;
 
 power_band = [power_band, yn'];
+
+%% T-test 
+
+FLD = cellfun(@str2num, res_fld(:,3));
+SVM = cellfun(@str2num, res_svm(:,3));
+
+[H,p,CI] = ttest2(FLD,SVM);
+
