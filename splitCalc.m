@@ -2,6 +2,7 @@
 clear
 clc
 
+%% Wrangle Data
 % Number of trials in data
 trials = 36;
 
@@ -30,30 +31,29 @@ for i = 1:length(trial_data)
     % Create group vector
     if mod(i,2) == 1
         status(i) = "CLOSE";
+        yn(i) = -1;
     else
         status(i) = "OPEN";
+        yn(i) = 1;
     end
 
 end
 
-% Set up figure
 figure; hold on
 
-% Seperate data
-plot(alpha(1:2:end), beta(1:2:end), "o", "Color", [1 0 0]);
-plot(alpha(2:2:end), beta(2:2:end), "o", "Color", [0 0 1]);
+plot(alpha(1:2:end), beta(1:2:end), "or"); 
+plot(alpha(2:2:end), beta(2:2:end), "ob");
 
-title("Alpha Band VS Beta Band Power")
-xlabel("Alpha Band Power (dB)")
-ylabel("Beta Band Power (dB)")
+axis([40 60 30 50])
 
-xlim([40 60]);
-ylim([30 50]);
+title("Two-Dimensional Feature Space")
+xlabel('Beta Band Power (dB)')
+ylabel('Alpha Band Power (dB)')
 
-labels = ["Eyes Closed" , "Eyes Open"];
+labels = ["Closed" , "Open"];
+legend(labels, "Location","best");
 
-legend(labels, "Location","northwest");
-
+%% Fisher's linear discriminant
 % Sort classifier hold-in and hold-out trials
 power_band = [alpha', beta'];
 
@@ -83,24 +83,26 @@ for i = -1:2:trials-3
 
 end
 
+%% Plot results
 % Plot decision boundary
 figure; hold on
 h3 = fimplicit(f);
-h3.Color = 'm';
-h3.LineWidth = 2;
-plot(sample_data(:, 1), sample_data(:,2), "o", "Color", [1 0 0]);
-plot(train_data(:, 1), train_data(:,2), "o", "Color", [0 0 1]);
+h3.Color = 'k';
+h3.LineWidth = 1;
 
-xlim([40 60]);
-ylim([30 50]);
+plot(alpha(1:2:end), beta(1:2:end), "or"); 
+plot(alpha(2:2:end), beta(2:2:end), "ob"); 
+plot(sample_data(:, 1), sample_data(:,2), "xk", 'MarkerSize', 12); 
 
-title("Alpha Band VS Beta Band Power (Decision Boundary After Classification)")
+axis([40 60 30 50])
+
+title("Fisher's Linear Discriminant")
 xlabel("Alpha Band Power (dB)")
 ylabel("Beta Band Power (dB)")
 
-labels = ["Decision Boundary", "Hold Out" , "Hold In"];
+labels = ["Decision Boundary", "Closed" , "Open", "Hold-Out"];
 
-legend(labels, "Location","northwest");
+legend(labels, "Location","best");
 
 hold off
 
@@ -115,7 +117,30 @@ for i = 1:trials
     end
 end
 
+%% Plot trial data for feature analysis
+close all
+figure;
+t_sec = 1:50000;
+plot(t_sec, trial_data{13})
+
+title("EEG Raw Signal - Eyes Closed")
+xlabel("Time (10^{-4} s)")
+ylabel("Measured Signal (V)")
+
+ylim([-0.04, 0.04])
+
+figure;
+t_sec = 1:50000;
+plot(t_sec, trial_data{14})
+
+title("EEG Raw Signal - Eyes Open")
+xlabel("Time (10^{-4} s)")
+ylabel("Measured Signal (V)")
+
+ylim([-0.04, 0.04])
+
+%% Post proc items for subsequent tasks
 % Calc success rate
 pct_succ = (1-length(find(res(:,3) == "0"))/trials) * 100;
 
-clearvars -except res pct_succ
+power_band = [power_band, yn'];
